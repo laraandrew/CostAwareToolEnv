@@ -1,0 +1,20 @@
+# Never commit real secrets
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+dist/
+*.egg-info/
+
+# Data / cache
+data/*.jsonl
+data/*.npy
+data/*.json
+
+# Editor
+.DS_Store
+.idea/
+.vscode/

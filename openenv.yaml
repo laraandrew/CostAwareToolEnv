@@ -1,0 +1,6 @@
+spec: 1
+app: tool-orchestrator-env
+type: space
+runtime: fastapi
+entrypoint: app:app
+port: 8000
