@@ -1,4 +1,4 @@
-# HuggingFace Spaces — ToolOrchestratorEnv
+# HuggingFace Spaces — CostAwareToolEnv
 # Builds a FastAPI server that exposes the OpenEnv endpoints.
 #
 # Required secret (set in Space Settings → Variables and secrets):

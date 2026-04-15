@@ -1,4 +1,4 @@
-"""Configuration for ToolOrchestratorEnv.
+"""Configuration for CostAwareToolEnv.
 
 All tuneable parameters live here so training scripts, the server, and
 baselines all read from a single source of truth.  Override individual

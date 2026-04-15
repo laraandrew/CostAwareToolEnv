@@ -18,7 +18,7 @@ def wiki_lookup_tool(action: OrchestratorAction) -> ToolResult:
     title = urllib.parse.quote(query.replace(" ", "_"))
     url = _WIKI_API.format(title)
     try:
-        req = urllib.request.Request(url, headers={"User-Agent": "ToolOrchestratorEnv/0.1"})
+        req = urllib.request.Request(url, headers={"User-Agent": "CostAwareToolEnv/0.1"})
         with urllib.request.urlopen(req, timeout=8) as resp:
             data = json.loads(resp.read().decode())
         extract = data.get("extract", "").strip()

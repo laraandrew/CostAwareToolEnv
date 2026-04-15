@@ -26,7 +26,7 @@ from env.models import (
 from env.reward import commit_reward, step_reward
 
 
-class ToolOrchestratorEnvironment:
+class CostAwareToolEnvironment:
     """
     OpenEnv-compatible RL environment for multi-tool cost-aware QA.
 

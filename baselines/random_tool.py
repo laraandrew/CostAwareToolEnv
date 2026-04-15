@@ -9,7 +9,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from data.loader import load_all
 from env.config import EnvConfig
-from env.environment import ToolOrchestratorEnvironment
+from env.environment import CostAwareToolEnvironment
 from env.models import TOOL_IDS, OrchestratorAction
 from tools import build_tool_registry
 
@@ -40,7 +40,7 @@ def run_episode(seed: int = 0) -> dict:
     config = EnvConfig(num_questions=5, total_budget=30.0, seed=seed)
     tools = build_tool_registry(config)
     dataset = load_all(max_per_domain=20)
-    env = ToolOrchestratorEnvironment(config=config, tools=tools, dataset=dataset)
+    env = CostAwareToolEnvironment(config=config, tools=tools, dataset=dataset)
     agent = RandomToolBaseline(commit_after=config.max_steps_per_question - 1)
 
     obs, state = env.reset(seed=seed)

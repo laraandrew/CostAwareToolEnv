@@ -1,4 +1,4 @@
-"""Tool registry for ToolOrchestratorEnv.
+"""Tool registry for CostAwareToolEnv.
 
 Each tool is a callable: (action: OrchestratorAction) -> ToolResult
 """

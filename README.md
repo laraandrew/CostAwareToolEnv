@@ -1,5 +1,5 @@
 ---
-title: Tool Orchestrator Environment
+title: Cost-Aware Tool Environment
 emoji: 🔧
 colorFrom: blue
 colorTo: purple
@@ -14,7 +14,7 @@ tags:
   - cost-aware
 ---
 
-# ToolOrchestratorEnv
+# CostAwareToolEnv
 
 **An OpenEnv-compatible reinforcement learning environment for multi-tool, cost-aware question answering.**
 
@@ -125,7 +125,7 @@ claude_toolOrchestrator/
 ├── .env.example            # Key template (copy → .env, never commit .env)
 │
 ├── env/                    # ── Core RL environment ──────────────────────────
-│   ├── environment.py      # ToolOrchestratorEnvironment: reset() + step()
+│   ├── environment.py      # CostAwareToolEnvironment: reset() + step()
 │   ├── models.py           # Pydantic types: Action, Observation, State, ToolResult
 │   ├── config.py           # EnvConfig dataclass: budget, costs, reward weights
 │   ├── answer_grading.py   # grade() → (exact_match, f1, quality)
@@ -179,7 +179,7 @@ python -m baselines.oracle
 
 ## Relation to SearchEconomicsEnv
 
-| | [SearchEconomicsEnv](https://github.com/sharma-yash01/SearchEconomicsEnv) | ToolOrchestratorEnv |
+| | [SearchEconomicsEnv](https://github.com/sharma-yash01/SearchEconomicsEnv) | CostAwareToolEnv |
 |---|---|---|
 | Tools available | 1 (search only) | 6 (search, wiki, calc, code, LLM, commit) |
 | Datasets | HotpotQA | HotpotQA + MATH + GPQA + HumanEval |
@@ -193,8 +193,8 @@ python -m baselines.oracle
 ## Docker (HuggingFace Spaces)
 
 ```bash
-docker build -t tool-orchestrator-env:latest .
-docker run -p 8000:8000 -e CERAMIC_API_KEY=cer_sk_live_... tool-orchestrator-env:latest
+docker build -t cost-aware-tool-env:latest .
+docker run -p 8000:8000 -e CERAMIC_API_KEY=cer_sk_live_... cost-aware-tool-env:latest
 ```
 
 ---
@@ -210,4 +210,4 @@ docker run -p 8000:8000 -e CERAMIC_API_KEY=cer_sk_live_... tool-orchestrator-env
 
 ## About
 
-ToolOrchestratorEnv extends SearchEconomicsEnv to a multi-tool setting, framing cost-aware tool selection as the core RL objective. Built for the OpenEnv competition track at AgentX (Berkeley RDI). Ceramic AI search API powers live web retrieval.
+CostAwareToolEnv extends SearchEconomicsEnv to a multi-tool setting, framing cost-aware tool selection as the core RL objective. Built for the OpenEnv competition track at AgentX (Berkeley RDI). Ceramic AI search API powers live web retrieval.

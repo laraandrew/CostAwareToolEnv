@@ -1,4 +1,4 @@
-"""Core RL environment: ToolOrchestratorEnvironment.
+"""Core RL environment: CostAwareToolEnvironment.
 
 Step logic:
   - Agent receives an OrchestratorObservation with the current question,
@@ -26,7 +26,7 @@ from .models import (
 from .reward import commit_reward, step_reward
 
 
-class ToolOrchestratorEnvironment:
+class CostAwareToolEnvironment:
     """
     OpenEnv-compatible RL environment for multi-tool cost-aware QA.
 

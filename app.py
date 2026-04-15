@@ -1,4 +1,4 @@
-"""FastAPI server for ToolOrchestratorEnv.
+"""FastAPI server for CostAwareToolEnv.
 
 Exposes the OpenEnv standard endpoints:
   POST /reset          → OrchestratorObservation + OrchestratorState
@@ -20,7 +20,7 @@ from pydantic import BaseModel
 
 from data.loader import load_all
 from env.config import EnvConfig
-from env.environment import ToolOrchestratorEnvironment
+from env.environment import CostAwareToolEnvironment
 from env.models import OrchestratorAction
 from tools import build_tool_registry
 
@@ -52,18 +52,18 @@ def create_app() -> FastAPI:
     tools   = build_tool_registry(config)
     dataset = load_all(split=config.data_split, max_per_domain=200)
 
-    # Multi-session state: session_id → ToolOrchestratorEnvironment
-    sessions: Dict[str, ToolOrchestratorEnvironment] = {}
+    # Multi-session state: session_id → CostAwareToolEnvironment
+    sessions: Dict[str, CostAwareToolEnvironment] = {}
 
     # Default shared environment for single-session usage (no session_id)
-    default_env = ToolOrchestratorEnvironment(config=config, tools=tools, dataset=dataset)
+    default_env = CostAwareToolEnvironment(config=config, tools=tools, dataset=dataset)
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
         yield
 
     app = FastAPI(
-        title="ToolOrchestratorEnv",
+        title="CostAwareToolEnv",
         description="Multi-tool cost-aware RL environment (OpenEnv / AgentX)",
         version="0.1.0",
         lifespan=lifespan,
@@ -81,7 +81,7 @@ def create_app() -> FastAPI:
             for k, v in req.config_overrides.items():
                 if hasattr(cfg, k):
                     setattr(cfg, k, v)
-        env = ToolOrchestratorEnvironment(config=cfg, tools=tools, dataset=dataset)
+        env = CostAwareToolEnvironment(config=cfg, tools=tools, dataset=dataset)
         obs, state = env.reset(seed=req.seed)
 
         session_id = str(uuid.uuid4())
@@ -140,7 +140,7 @@ _DEMO_HTML = """<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>ToolOrchestratorEnv</title>
+<title>CostAwareToolEnv</title>
 <style>
   body { font-family: monospace; max-width: 860px; margin: 40px auto; padding: 0 20px; }
   h1   { color: #333; }
@@ -154,7 +154,7 @@ _DEMO_HTML = """<!DOCTYPE html>
 </style>
 </head>
 <body>
-<h1>ToolOrchestratorEnv</h1>
+<h1>CostAwareToolEnv</h1>
 <p>Multi-tool cost-aware RL environment — AgentX / OpenEnv</p>
 
 <button onclick="doReset()">Reset Episode</button>
