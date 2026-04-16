@@ -24,6 +24,7 @@ from .models import (
     TOOL_IDS,
 )
 from .reward import commit_reward, step_reward
+from tools import dispatch_tool
 
 
 class CostAwareToolEnvironment:
@@ -95,6 +96,8 @@ class CostAwareToolEnvironment:
     ) -> Tuple[OrchestratorObservation, float, bool, OrchestratorState]:
         if self._episode_done:
             raise RuntimeError("Episode is done. Call reset() first.")
+        if self._state is None:
+            raise RuntimeError("Call reset() first.")
 
         tool_id = action.tool_id
         if tool_id not in TOOL_IDS:
@@ -160,30 +163,17 @@ class CostAwareToolEnvironment:
         if budget_after > state.total_budget:
             r = config.incorrect_reward
             self._episode_done = True
-            obs = self._make_obs(reward=r, question_done=True, done=True)
+            obs = self._make_obs(
+                reward=r,
+                question_done=True,
+                done=True,
+            )
             return obs, r, True, state
 
         t0 = time.perf_counter()
-        tool_fn = self.tools.get(tool_id)
-        if tool_fn is None:
-            tool_result = ToolResult(
-                tool_id=tool_id, cost=cost,
-                output="[Tool not available in this environment]",
-                latency_s=0.0,
-                error="not_available",
-            )
-        else:
-            try:
-                tool_result = tool_fn(action)
-                tool_result.cost = cost
-            except Exception as exc:
-                tool_result = ToolResult(
-                    tool_id=tool_id, cost=cost,
-                    output=f"[Error: {exc}]",
-                    latency_s=time.perf_counter() - t0,
-                    error=str(exc),
-                )
+        tool_result = dispatch_tool(tool_id, action, self.tools)
         tool_result.latency_s = time.perf_counter() - t0
+        tool_result.cost = cost
 
         state.budget_spent = budget_after
         state.budget_remaining_ratio = max(
@@ -234,6 +224,8 @@ class CostAwareToolEnvironment:
     ) -> OrchestratorObservation:
         state = self._state
         cfg   = self.config
+        if state is None:
+            raise RuntimeError("Call reset() first.")
 
         if 0 <= self._current_q_idx < len(self._questions):
             q_entry = self._questions[self._current_q_idx]

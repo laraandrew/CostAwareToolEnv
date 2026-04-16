@@ -24,6 +24,15 @@ _SAFE_OPS = {
     ast.UAdd: operator.pos,
 }
 
+_SAFE_COMPARISONS = {
+    ast.Eq: operator.eq,
+    ast.NotEq: operator.ne,
+    ast.Lt: operator.lt,
+    ast.LtE: operator.le,
+    ast.Gt: operator.gt,
+    ast.GtE: operator.ge,
+}
+
 _SAFE_FUNCS: dict[str, Any] = {
     "abs": abs, "round": round, "min": min, "max": max,
     "sqrt": math.sqrt, "log": math.log, "log2": math.log2,
@@ -53,6 +62,17 @@ def _safe_eval(node: ast.AST) -> Any:
         if op_type not in _SAFE_OPS:
             raise ValueError(f"Unsupported unary: {op_type.__name__}")
         return _SAFE_OPS[op_type](_safe_eval(node.operand))
+    if isinstance(node, ast.Compare):
+        left = _safe_eval(node.left)
+        for op, comparator in zip(node.ops, node.comparators):
+            op_type = type(op)
+            if op_type not in _SAFE_COMPARISONS:
+                raise ValueError(f"Unsupported comparison: {op_type.__name__}")
+            right = _safe_eval(comparator)
+            if not _SAFE_COMPARISONS[op_type](left, right):
+                return False
+            left = right
+        return True
     if isinstance(node, ast.Call):
         func = _safe_eval(node.func)
         if not callable(func):

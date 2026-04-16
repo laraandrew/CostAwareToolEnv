@@ -147,7 +147,7 @@ action.query = "William Shakespeare"
 
 ### `calculator` — Cost: **0.1**
 
-**What it does:** Evaluates a math expression safely using Python's `ast` (Abstract Syntax Tree) module. The expression is parsed into a tree structure, and only pre-approved operations are allowed (addition, subtraction, multiplication, division, power, modulo, and common math functions like `sqrt`, `log`, `sin`, `cos`).
+**What it does:** Evaluates a math expression safely using Python's `ast` (Abstract Syntax Tree) module. The expression is parsed into a tree structure, and only pre-approved operations are allowed (addition, subtraction, multiplication, division, power, modulo, comparisons, and common math functions like `sqrt`, `log`, `sin`, `cos`).
 
 **Why not just use `eval()`?** Because `eval("__import__('os').system('rm -rf /')")` would delete your hard drive. The AST approach means the code is never executed — it's parsed into a data structure and we only compute what we explicitly allow.
 
@@ -168,9 +168,9 @@ action.expression = "import os"  # BLOCKED — not a valid math expression
 
 ### `code_executor` — Cost: **0.3**
 
-**What it does:** Runs arbitrary Python code in a sandboxed `exec()` environment. Captures whatever is printed to stdout and returns it as the result.
+**What it does:** Runs Python code in a sandboxed `exec()` environment for intended coding tasks. Captures whatever is printed to stdout and returns it as the result.
 
-**Security model:** Blocks imports of dangerous modules (`os`, `sys`, `subprocess`, `socket`, `shutil`, `pathlib`, `importlib`, `ctypes`, `multiprocessing`, `threading`, and more). Uses a custom `__import__` wrapper that raises an `ImportError` before the module loads.
+**Security model:** Blocks import statements, dangerous builtin names such as `open`, `eval`, `exec`, `globals`, and obvious object-graph escape paths such as dunder attribute traversal. Only a curated builtin/module surface is exposed.
 
 **Best for:** HumanEval coding tasks where the agent needs to actually run code to verify correctness.
 
@@ -196,6 +196,8 @@ print(fibonacci(10))
 **Best for:** GPQA graduate-level science problems where factual retrieval isn't enough and actual reasoning is required.
 
 **Graceful fallback:** If `TOGETHER_API_KEY` is not set, returns a clear error message instead of crashing. The agent learns to avoid this tool when it's unavailable.
+
+**Tool routing note:** The environment exposes the canonical tool manifest at `GET /tools`, and tool dispatch normalizes missing-tool and tool-crash cases into explicit `ToolResult` errors. That keeps the OpenEnv-style contract stable even when a backing service is missing.
 
 ---
 
@@ -503,9 +505,9 @@ A well-trained agent should exhibit these behaviors:
 CostAwareToolEnv/
 │
 ├── app.py
-│   The FastAPI web server. Handles /reset, /step, /health, /web.
+│   The FastAPI web server. Handles /reset, /step, /health, /tools, /web.
 │   Multi-session: each /reset returns a session_id used in /step.
-│   Loads dataset + tools once at startup for efficiency.
+│   Lazily loads the dataset and exposes the canonical tool manifest.
 │
 ├── openenv.yaml
 │   Deployment spec for the OpenEnv competition framework.
@@ -552,11 +554,12 @@ CostAwareToolEnv/
 │       Returns flat List[Dict] with 'domain' key on each item.
 │
 ├── tools/
-│   ├── __init__.py       build_tool_registry() — returns {tool_id: callable}
+│   ├── runtime.py        Tool catalog, validation, and explicit dispatch
+│   ├── __init__.py       build_tool_registry() + tool manifest helpers
 │   ├── ceramic_search.py make_search_tool() factory wrapping CeramicClient
 │   ├── wiki_lookup.py    Wikipedia REST API, first paragraph
-│   ├── calculator.py     Safe AST-based math eval
-│   ├── code_executor.py  Sandboxed exec with blocked dangerous imports
+│   ├── calculator.py     Safe AST-based math eval with comparisons
+│   ├── code_executor.py  Sandboxed exec with blocked imports and dunder escapes
 │   ├── llm_reason.py     Together AI API, graceful fallback
 │   └── commit.py         Pass-through; grading is in environment.py
 │

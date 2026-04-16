@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import urllib.parse
 import urllib.request
+import urllib.error
 import json
 
 from env.models import OrchestratorAction, ToolResult

@@ -108,6 +108,10 @@ Execute one tool call. Pass `session_id` (from `/reset`) as a query param to sup
 { "tool_id": "commit",         "answer": "1889" }
 ```
 
+### `GET /tools`
+
+Returns the canonical tool manifest with each tool's label, purpose, input field, cost, and safety notes.
+
 ### `GET /health`
 
 Returns `{"status": "ok"}`.
@@ -123,6 +127,7 @@ claude_toolOrchestrator/
 ├── openenv.yaml            # OpenEnv deployment spec
 ├── requirements.txt        # Python dependencies
 ├── .env.example            # Key template (copy → .env, never commit .env)
+├── tools/runtime.py        # Tool catalog, validation, and explicit dispatch
 │
 ├── env/                    # ── Core RL environment ──────────────────────────
 │   ├── environment.py      # CostAwareToolEnvironment: reset() + step()
@@ -141,7 +146,7 @@ claude_toolOrchestrator/
 │   ├── ceramic_search.py   # Web search (Ceramic AI API)
 │   ├── wiki_lookup.py      # Wikipedia REST API, first paragraph
 │   ├── calculator.py       # Safe AST-based math evaluator (no exec)
-│   ├── code_executor.py    # Sandboxed Python exec (blocks os/sys/subprocess)
+│   ├── code_executor.py    # Sandboxed Python exec (blocked imports, dunder attrs)
 │   ├── llm_reason.py       # Together AI chain-of-thought (graceful fallback)
 │   └── commit.py           # Answer pass-through; grading runs in environment
 │
@@ -163,6 +168,15 @@ claude_toolOrchestrator/
 | `HF_TOKEN` | Optional | Required only to load gated datasets (GPQA) |
 
 If no Ceramic key is set, `ceramic_search` falls back to deterministic offline results; all other tools work without any key.
+
+The Python executor is intentionally narrow:
+
+- import statements are rejected
+- obvious sandbox-escape names such as `open`, `eval`, `globals`, and `__import__` are blocked
+- dunder attribute access such as `.__class__` and `.__subclasses__()` is blocked
+- only a curated builtin/module surface is exposed
+
+That keeps the tool usable for intended coding tasks without turning it into a hidden general-purpose shell.
 
 ---
 
