@@ -12,6 +12,8 @@
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
     onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"
+    onload="mermaid.initialize({startOnLoad:true,theme:'dark',securityLevel:'loose',themeVariables:{background:'#162032',primaryColor:'#1a2740',primaryTextColor:'#e0e7ef',primaryBorderColor:'#10b981',lineColor:'#8a9bb5',secondaryColor:'#0c1222',tertiaryColor:'#22314d',fontFamily:'IBM Plex Sans'}});"></script>
   <style>
     :root {
       --bg: #0c1222; --surface: #162032; --surface-2: #1a2740;
@@ -67,6 +69,8 @@
     figure { margin: 2rem 0; }
     figure svg { width: 100%; height: auto; }
     figcaption { text-align: center; color: var(--muted); font-size: .83rem; margin-top: .7rem; }
+    .diagram { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; margin: 1.5rem 0; overflow-x: auto; }
+    .diagram .mermaid { min-width: 620px; }
     .callout { text-align: center; padding: 2rem 1.5rem; margin: 3rem 0; background: linear-gradient(135deg, var(--accent-dim), rgba(52,211,153,.04)); border: 1px solid rgba(16,185,129,.2); border-radius: var(--radius); }
     .callout .q { font-size: 1.2rem; font-weight: 700; color: var(--text); font-style: italic; margin-bottom: .4rem; }
     .callout .sub { color: var(--muted); font-size: .93rem; }
@@ -129,6 +133,15 @@
 
     <h3>Where this came from</h3>
     <p>CostAwareToolEnv generalizes <a href="https://github.com/sharma-yash01/SearchEconomicsEnv" target="_blank">SearchEconomicsEnv</a> (Yashaswi Sharma, University of Southern California / Ceramic AI), which posed a simpler version: given a fixed number of search calls, can an RL agent learn to answer HotpotQA questions efficiently? That work showed agents could learn non-trivial search strategies. We ask the harder question: <strong>can the same principle scale to multiple tools and multiple domains?</strong></p>
+    <figure class="diagram">
+      <div class="mermaid">
+flowchart LR
+  A["Weitzman search economics<br/>information has a cost"] --> B["SearchEconomicsEnv<br/>1 search tool + HotpotQA"]
+  B --> C["CostAwareToolEnv<br/>6 tools + 4 domains + shared budget"]
+  C --> D["AgentBeats Phase 2<br/>OpenEnv submission"]
+      </div>
+      <figcaption>Research lineage: from economic search theory to a deployed multi-tool RL environment.</figcaption>
+    </figure>
     <div class="table-wrap">
       <table>
         <thead><tr><th></th><th>SearchEconomicsEnv</th><th>CostAwareToolEnv</th></tr></thead>
@@ -148,6 +161,25 @@
     <blockquote>An OpenEnv-native sequential MDP where an LLM agent selects from 6 tools with heterogeneous costs under a shared episode budget, across 10 questions from 4 domains.</blockquote>
 
     <h3>Episode structure</h3>
+    <figure class="diagram">
+      <div class="mermaid">
+flowchart TD
+  A["Reset episode<br/>budget = 50 units"] --> B["Sample 10 questions<br/>HotpotQA / MATH / GPQA / HumanEval"]
+  B --> C["Show observation<br/>question + domain + budget + context"]
+  C --> D{"Agent action"}
+  D -->|"tool call"| E["Run selected tool<br/>charge cost + append result"]
+  E --> F{"Budget exhausted<br/>or max 8 steps?"}
+  F -->|"no"| C
+  F -->|"yes"| I["Advance or end episode"]
+  D -->|"commit"| G["Grade answer<br/>Exact Match + token F1"]
+  G --> H["Compute commit reward<br/>quality + efficiency bonus"]
+  H --> I
+  I --> J{"Questions remain<br/>and budget remains?"}
+  J -->|"yes"| C
+  J -->|"no"| K["Episode done"]
+      </div>
+      <figcaption>One episode is a sequential budget-management problem, not ten isolated QA calls.</figcaption>
+    </figure>
     <pre><code>START EPISODE
   Budget = 50.0 units
   Draw 10 questions (mix: 40% HotpotQA, 30% MATH, 20% GPQA, 10% HumanEval)
@@ -180,6 +212,27 @@ END EPISODE</code></pre>
     </div>
     <p>Costs span a <strong>20:1 ratio</strong> from calculator to llm_reason. A single LLM reasoning call burns 4% of the entire episode budget. The agent must learn that this is sometimes worth it (GPQA) and sometimes wasteful (simple arithmetic).</p>
 
+    <figure class="diagram">
+      <div class="mermaid">
+flowchart LR
+  Q["Question + domain"] --> R{"Routing decision"}
+  R -->|"arithmetic / symbolic"| C["calculator<br/>0.1"]
+  R -->|"code execution"| X["code_executor<br/>0.3"]
+  R -->|"entity fact"| W["wiki_lookup<br/>0.5"]
+  R -->|"multi-hop factual"| S["ceramic_search<br/>1.0"]
+  R -->|"hard science reasoning"| L["llm_reason<br/>2.0"]
+  C --> A["Context window"]
+  X --> A
+  W --> A
+  S --> A
+  L --> A
+  A --> M{"Confident?"}
+  M -->|"yes"| K["commit<br/>0.0"]
+  M -->|"no"| R
+      </div>
+      <figcaption>The core policy problem is routing: choose the cheapest tool that is likely to change the answer.</figcaption>
+    </figure>
+
     <h3>Observation space</h3>
     <p>At every step, the agent sees: the question text and domain tag, remaining budget and fraction thereof, tool call history and results for the current question, number of questions remaining, and running accuracy. The agent emits a structured action specifying tool selection, query/expression/code, and (for commit) an answer.</p>
 
@@ -209,6 +262,26 @@ END EPISODE</code></pre>
     <p>Every tool call produces a negative reward equal to its cost. This creates a running penalty — the agent pays for every action it takes.</p>
 
     <h3>Part 2: Commit reward (on answer submission)</h3>
+    <figure class="diagram">
+      <div class="mermaid">
+flowchart TD
+  A["Prediction + gold answer"] --> B["Normalize text<br/>lowercase, punctuation, articles"]
+  B --> C["Compute Exact Match"]
+  B --> D["Compute token F1"]
+  C --> E["quality = 1.0 if EM<br/>otherwise token F1"]
+  D --> E
+  E --> F["base = -0.5 + quality * 1.5"]
+  E --> G{"quality >= 0.5?"}
+  G -->|"yes"| H["bonus = 0.1 * remaining_budget_ratio"]
+  G -->|"no"| I["bonus = 0"]
+  F --> J["commit reward = base + bonus"]
+  H --> J
+  I --> J
+  K["tool costs already charged<br/>as step rewards"] --> L["episode return"]
+  J --> L
+      </div>
+      <figcaption>The reward separates spending pressure from answer quality, then gates efficiency bonus on a useful answer.</figcaption>
+    </figure>
     <div class="math-block">
       $$R_{\text{commit}} = \underbrace{r_{\text{wrong}} + \text{quality} \times (r_{\text{right}} - r_{\text{wrong}})}_{\text{base}} + \underbrace{\eta \cdot \gamma \cdot \frac{B_{\text{remaining}}}{B_{\text{total}}}}_{\text{efficiency bonus}}$$
     </div>
@@ -264,6 +337,27 @@ END EPISODE</code></pre>
       $$J_{\text{GRPO}}(\theta) = \frac{1}{G}\sum_{i=1}^{G} \frac{1}{|o_i|}\sum_{t=1}^{|o_i|} \left\{\min\left[\frac{\pi_\theta(a_{i,t} \mid s, a_{i,&lt;t})}{\pi_{\theta_{\text{old}}}(a_{i,t} \mid s, a_{i,&lt;t})} \hat{A}_{i,t},\; \text{clip}(\cdot, 1{-}\epsilon, 1{+}\epsilon)\hat{A}_{i,t}\right] - \beta D_{\text{KL}}[\pi_\theta \| \pi_{\text{ref}}]\right\}$$
     </div>
     <p>In our setup, each completion is an entire <strong>multi-question episode trajectory</strong>: the agent's sequence of tool selections, queries, and commits across 10 questions under a shared budget. A trajectory that routes correctly and cheaply gets high reward; one that wastes budget or answers wrong gets low reward.</p>
+
+    <figure class="diagram">
+      <div class="mermaid">
+sequenceDiagram
+  participant GRPO as GRPO trainer
+  participant Policy as LLM policy
+  participant Client as OpenEnv client
+  participant Env as CostAwareToolEnv
+  participant Tools as Tool registry
+  GRPO->>Policy: sample G trajectories
+  Policy->>Client: structured tool actions
+  Client->>Env: WebSocket /step
+  Env->>Tools: dispatch selected tool
+  Tools-->>Env: tool result + cost
+  Env-->>Client: observation + reward + done
+  Client-->>GRPO: completed trajectory returns
+  GRPO->>GRPO: z-score rewards into advantages
+  GRPO->>Policy: policy update
+      </div>
+      <figcaption>OpenEnv keeps training decoupled from the environment server: the policy learns from complete budgeted trajectories.</figcaption>
+    </figure>
 
     <h3>Why RL is the right framework</h3>
     <ul>
@@ -338,6 +432,21 @@ END EPISODE</code></pre>
   <section id="training">
     <h2>GRPO Training: What This Environment Is Built to Test</h2>
     <p>The next research step is to train with TRL's GRPO via an OpenEnv-compatible rollout loop. We are careful about the claim: this submission ships the environment and baselines, not a final trained policy. The failure modes below are the concrete behaviors the environment is designed to make measurable.</p>
+
+    <figure class="diagram">
+      <div class="mermaid">
+flowchart TD
+  A["Training risk"] --> B["Commit immediately<br/>spend nothing, answer poorly"]
+  A --> C["Overuse expensive tools<br/>solve early, lose budget"]
+  A --> D["Collapse to one domain<br/>same tool everywhere"]
+  A --> E["Variable trajectory lengths<br/>harder batching and credit assignment"]
+  B --> F["Measured by quality gate<br/>and wrong-answer penalty"]
+  C --> G["Measured by shared budget<br/>and cumulative step costs"]
+  D --> H["Measured against<br/>domain-oracle baseline"]
+  E --> I["Exposed by multi-step<br/>OpenEnv episodes"]
+      </div>
+      <figcaption>The benchmark is useful because the common training failures are observable in reward, budget, and baseline comparisons.</figcaption>
+    </figure>
 
     <h3>1. Reward scale mismatch</h3>
     <p>Step rewards (−0.1 to −2.0) and commit rewards (−0.5 to +1.1) operate on different scales. A useful trained policy must learn that a costly call can still be rational when it raises answer quality enough to recover the cost.</p>
