@@ -22,6 +22,15 @@ Built on top of [SearchEconomicsEnv](https://huggingface.co/spaces/yashu2000/sea
 
 The core research question: **can an RL agent learn a cost-aware tool routing policy that outperforms simple heuristics like "always search" or "always use the cheapest tool"?**
 
+Built for the **AgentX-AgentBeats Phase 2 OpenEnv Research Track**.
+
+## Links
+
+- **Live environment Space:** [landrew9/cost-aware-tool-env](https://huggingface.co/spaces/landrew9/cost-aware-tool-env)
+- **GitHub repository:** [laraandrew/CostAwareToolEnv](https://github.com/laraandrew/CostAwareToolEnv)
+- **Submission blog Space:** [landrew9/CostAwareToolEnv-Blog](https://huggingface.co/spaces/landrew9/CostAwareToolEnv-Blog)
+- **Personal blog:** [Cost-Aware Tool Orchestration via Reinforcement Learning](https://blog.andrewlara.com/ai/engineering/projects/2026/04/13/cost-aware-tool-orchestration-via-reinforcement-learning.html)
+
 ---
 
 ## What the agent learns
@@ -68,8 +77,8 @@ The efficiency bonus is only awarded when the agent answers correctly **and** st
 
 ```bash
 # 1. Clone and install
-git clone <this-repo>
-cd claude_toolOrchestrator
+git clone git@github.com:laraandrew/CostAwareToolEnv.git
+cd CostAwareToolEnv
 pip install -r requirements.txt
 
 # 2. Configure keys (copy the example and fill in values)
@@ -121,7 +130,7 @@ Returns `{"status": "ok"}`.
 ## Project layout
 
 ```
-claude_toolOrchestrator/
+CostAwareToolEnv/
 │
 ├── app.py                  # FastAPI server — multi-session, OpenAPI, demo UI
 ├── openenv.yaml            # OpenEnv deployment spec
@@ -149,6 +158,10 @@ claude_toolOrchestrator/
 │   ├── code_executor.py    # Sandboxed Python exec (blocked imports, dunder attrs)
 │   ├── llm_reason.py       # Together AI chain-of-thought (graceful fallback)
 │   └── commit.py           # Answer pass-through; grading runs in environment
+│
+├── blog-space/             # Static HF Blog Space artifact (deploy separately)
+│   ├── index.html
+│   └── README.md
 │
 └── baselines/              # ── Reference policies ───────────────────────────
     ├── random_tool.py      # Uniform random tool selection
@@ -183,7 +196,7 @@ That keeps the tool usable for intended coding tasks without turning it into a h
 ## Running baselines
 
 ```bash
-# From inside claude_toolOrchestrator/
+# From inside CostAwareToolEnv/
 python -m baselines.random_tool
 python -m baselines.cheapest_first
 python -m baselines.oracle
@@ -224,4 +237,4 @@ docker run -p 8000:8000 -e CERAMIC_API_KEY=cer_sk_live_... cost-aware-tool-env:l
 
 ## About
 
-CostAwareToolEnv extends SearchEconomicsEnv to a multi-tool setting, framing cost-aware tool selection as the core RL objective. Built for the OpenEnv competition track at AgentX (Berkeley RDI). Ceramic AI search API powers live web retrieval.
+CostAwareToolEnv extends SearchEconomicsEnv to a multi-tool setting, framing cost-aware tool selection as the core RL objective. Built for the AgentX-AgentBeats Phase 2 OpenEnv Research Track at Berkeley RDI. Ceramic AI search API powers live web retrieval.
