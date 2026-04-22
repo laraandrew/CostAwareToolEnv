@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>CostAwareToolEnv: Teaching LLM Agents to Think Before They Spend</title>
-  <meta name="description" content="CostAwareToolEnv: an OpenEnv-native RL benchmark for cost-aware tool orchestration. Agents learn when to spend and when to save across 6 tools and 4 benchmarks under a shared budget.">
+  <title>The Price of Thinking: CostAwareToolEnv</title>
+  <meta name="description" content="The Price of Thinking: CostAwareToolEnv, an OpenEnv-native RL benchmark where LLM agents learn cost-aware tool orchestration across 6 tools and 4 benchmarks under a shared budget.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -35,6 +35,8 @@
     .hero h1 { font-size: clamp(1.9rem, 4vw, 3rem); font-weight: 800; letter-spacing: -.02em; line-height: 1.15; background: linear-gradient(135deg, #e0e7ef 30%, #10b981 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .hero .subtitle { color: var(--muted); font-size: 1.1rem; max-width: 660px; margin: 1rem auto 0; }
     .hero .byline { color: var(--muted); font-size: .83rem; margin-top: 1.4rem; font-style: italic; }
+    .authors { color: var(--muted); font-size: .88rem; line-height: 1.7; margin: 1.2rem auto 0; max-width: 760px; }
+    .authors strong { color: var(--text); }
     .badges { display: flex; justify-content: center; gap: .5rem; flex-wrap: wrap; margin: 1.4rem 0; }
     .badges img { height: 22px; }
     .btn-group { display: flex; gap: .7rem; justify-content: center; margin: 2rem 0; flex-wrap: wrap; }
@@ -94,8 +96,8 @@
 
   <div class="hero">
     <div class="hero-badge">OpenEnv · AgentBeats Phase 2</div>
-    <h1>CostAwareToolEnv</h1>
-    <p class="subtitle">Teaching LLM Agents to Think Before They Spend: Cost-Aware Tool Orchestration via Reinforcement Learning</p>
+    <h1>The Price of Thinking</h1>
+    <p class="subtitle">CostAwareToolEnv teaches LLM agents when a tool call is worth its cost, and when the smarter move is to stop spending.</p>
     <div class="badges">
       <a href="https://github.com/laraandrew/CostAwareToolEnv" target="_blank"><img src="https://img.shields.io/badge/GitHub-Repository-181717?logo=github" alt="GitHub"/></a>
       <a href="https://huggingface.co/spaces/landrew9/cost-aware-tool-env" target="_blank"><img src="https://img.shields.io/badge/HF%20Space-Live%20Env-FFD21E?logo=huggingface&logoColor=black" alt="HF Space"/></a>
@@ -104,7 +106,11 @@
       <img src="https://img.shields.io/badge/Benchmarks-4-blue" alt="4 Benchmarks"/>
       <img src="https://img.shields.io/badge/Training-GRPO-orange" alt="GRPO"/>
     </div>
-    <div class="byline">AgentBeats Phase 2 · OpenEnv Challenge Submission &nbsp;|&nbsp; Primary Author: Andrew Lara &nbsp;|&nbsp; Co-Authors: Yashaswi Sharma, Defu Cao, Muyan Weng</div>
+    <div class="authors">
+      <strong>Andrew Lara</strong> — Franklin and Marshall College<br/>
+      <strong>Yashaswi Sharma</strong>, <strong>Defu Cao</strong>, <strong>Muyan Weng</strong> — University of Southern California
+    </div>
+    <div class="byline">CostAwareToolEnv · AgentBeats Phase 2 · OpenEnv Challenge Submission</div>
   </div>
 
   <div class="btn-group">
@@ -119,9 +125,10 @@
     <p>Modern LLM agents have access to tools — search engines, calculators, code interpreters, databases. In every real deployment, these tools cost something: API fees, latency, rate limits, compute time. But almost every existing RL benchmark treats tools as <strong>free and unlimited</strong>.</p>
     <p>This creates a gap between research and reality. An agent trained on "use whatever tools you want" behaves terribly in production where every call costs money. CostAwareToolEnv closes that gap.</p>
     <p>The agent is given a fixed <strong>budget of 50 cost units</strong> to spend across 10 questions. Every tool call deducts from that budget. The agent must decide: <em>which tool is worth calling for this question? How many times should I call tools before committing an answer? Is it worth spending 2.0 on an LLM call, or can a 0.1 calculator solve this?</em></p>
+    <p><strong>In one sentence:</strong> CostAwareToolEnv is a deployed, test-covered OpenEnv environment for studying whether reinforcement learning can teach LLM agents to route across heterogeneous tools under a shared budget, rather than treating every tool call as free.</p>
 
     <h3>Where this came from</h3>
-    <p>CostAwareToolEnv generalizes <a href="https://github.com/sharma-yash01/SearchEconomicsEnv" target="_blank">SearchEconomicsEnv</a> (Sharma, USC / Ceramic AI), which posed a simpler version: given a fixed number of search calls, can an RL agent learn to answer HotpotQA questions efficiently? That work showed agents could learn non-trivial search strategies. We ask the harder question: <strong>can the same principle scale to multiple tools and multiple domains?</strong></p>
+    <p>CostAwareToolEnv generalizes <a href="https://github.com/sharma-yash01/SearchEconomicsEnv" target="_blank">SearchEconomicsEnv</a> (Yashaswi Sharma, University of Southern California / Ceramic AI), which posed a simpler version: given a fixed number of search calls, can an RL agent learn to answer HotpotQA questions efficiently? That work showed agents could learn non-trivial search strategies. We ask the harder question: <strong>can the same principle scale to multiple tools and multiple domains?</strong></p>
     <div class="table-wrap">
       <table>
         <thead><tr><th></th><th>SearchEconomicsEnv</th><th>CostAwareToolEnv</th></tr></thead>
@@ -281,6 +288,14 @@ END EPISODE</code></pre>
 
   <!-- ============================================================ -->
   <section id="results">
+    <h2>What We Actually Built</h2>
+    <ul>
+      <li><strong>A complete environment server.</strong> FastAPI endpoints, WebSocket client support, per-session state, Docker/Hugging Face deployment metadata, and a browser demo route.</li>
+      <li><strong>A six-tool action space.</strong> Ceramic search, Wikipedia lookup, calculator, Python executor, LLM reasoning, and commit, each with explicit costs and normalized error handling.</li>
+      <li><strong>A verifiable reward function.</strong> Every tool call is penalized by cost; commits are scored with Exact Match, token F1, and an efficiency bonus gated by answer quality.</li>
+      <li><strong>Reference baselines and tests.</strong> Random, cheapest-first, and domain-oracle policies ship with unit tests covering the API, tools, sandbox behavior, and reward-facing contracts.</li>
+    </ul>
+
     <h2>Baselines and Honest Results Status</h2>
 
     <h3>Three shipped baselines</h3>
@@ -309,36 +324,35 @@ END EPISODE</code></pre>
     <p>The core claim fails if the trained policy cannot beat the domain oracle on cost-adjusted reward.</p>
 
     <h3>Honest status of the trained policy</h3>
-    <div class="status-honest">⚠ HONEST STATUS: Pipeline validated, no converged checkpoint</div>
-    <p>We do <strong>not</strong> yet have a converged, baseline-beating checkpoint inside the submission window. What we have is:</p>
+    <div class="status-honest">⚠ HONEST STATUS: Environment complete, no converged checkpoint claimed</div>
+    <p>We do <strong>not</strong> claim a converged, baseline-beating trained checkpoint. The research contribution in this submission is the environment, reward design, baselines, deployment path, and the training-ready interface. What we have is:</p>
     <ul>
-      <li><strong>Pipeline validated end-to-end.</strong> Full multi-turn rollouts against the OpenEnv WebSocket, structured JSON actions parsed with guardrails, episode logs persisting to <code>reward_logs.jsonl</code>, non-zero reward variance on initial runs.</li>
+      <li><strong>Environment validated end-to-end.</strong> Reset/step API, tool dispatch, answer grading, reward calculation, concurrent session handling, and browser demo are implemented and covered by tests.</li>
       <li><strong>Environment deployed and tested.</strong> HF Space serves concurrent sessions. WebSocket client connects, steps episodes, returns structured observations.</li>
-      <li><strong>All three baselines functional</strong> and producing expected ballpark numbers.</li>
-      <li><strong>Infrastructure issues diagnosed.</strong> See Training section — these are the contribution most useful to the community.</li>
+      <li><strong>All three baselines functional.</strong> They provide sanity checks for random exploration, low-cost heuristics, and hardcoded domain routing.</li>
+      <li><strong>Training risks identified honestly.</strong> See the next section for the concrete failure modes this environment is designed to expose.</li>
     </ul>
   </section>
 
   <!-- ============================================================ -->
   <section id="training">
-    <h2>GRPO Training: What Shipping This Actually Looked Like</h2>
-    <p>The training client uses TRL's GRPO via <code>rollout_func</code>, connecting to the environment over WebSocket. The incidents below each changed an architectural decision.</p>
-    <p><em>[Training war stories to be filled in from actual development logs — placeholder incidents below reflect the structural patterns encountered. Full incident reports forthcoming.]</em></p>
+    <h2>GRPO Training: What This Environment Is Built to Test</h2>
+    <p>The next research step is to train with TRL's GRPO via an OpenEnv-compatible rollout loop. We are careful about the claim: this submission ships the environment and baselines, not a final trained policy. The failure modes below are the concrete behaviors the environment is designed to make measurable.</p>
 
-    <h3>I-1. Reward scale mismatch</h3>
-    <p>Step rewards (−0.1 to −2.0) and commit rewards (−0.5 to +1.1) operate on different scales. Early GRPO runs showed the policy ignoring commit quality and optimizing purely to minimize step costs (never calling tools, committing immediately). The fix: normalize cumulative step reward to the same $[0,1]$ range as commit reward before summing.</p>
+    <h3>1. Reward scale mismatch</h3>
+    <p>Step rewards (−0.1 to −2.0) and commit rewards (−0.5 to +1.1) operate on different scales. A useful trained policy must learn that a costly call can still be rational when it raises answer quality enough to recover the cost.</p>
 
-    <h3>I-2. Budget-exhaustion cliff</h3>
-    <p>When the agent exhausts its budget mid-episode, remaining questions get zero reward. This cliff creates a discontinuity that makes credit assignment extremely noisy. The agent either learns extreme frugality (cheapest-first collapse) or ignores budget entirely. Prescribed fix: soft budget penalty that increases gradually as budget drops below 20%, rather than hard termination.</p>
+    <h3>2. Budget-exhaustion cliff</h3>
+    <p>When the agent exhausts its shared budget, the episode ends. This makes early overspending visible: a policy that solves the first few questions with expensive tools can lose the rest of the episode.</p>
 
-    <h3>I-3. Variable-length episode NCCL desync</h3>
-    <p>In multi-GPU server mode, different DDP ranks make different numbers of <code>generate()</code> calls per episode. NCCL collectives are sequence-numbered — different call counts per rank equals permanent desync. Fix: pad every episode to a fixed number of generates, discarding dummy outputs.</p>
+    <h3>3. Variable-length trajectory handling</h3>
+    <p>Episodes can end after different numbers of tool calls because agents commit, run out of steps, or spend the budget. That makes batching and credit assignment harder than single-turn QA, and it is exactly why a realistic tool-use environment matters.</p>
 
-    <h3>I-4. Domain-collapse under GRPO</h3>
-    <p>With 40/30/20/10 domain mix, the policy quickly learns that HotpotQA (40% of questions) dominates the reward landscape. It collapses to always calling <code>ceramic_search</code> regardless of domain. Prescribed fix: domain-stratified sampling in GRPO groups so every group contains at least one question per domain.</p>
+    <h3>4. Domain-collapse risk</h3>
+    <p>The domain mix is intentionally uneven: 40% HotpotQA, 30% MATH, 20% GPQA, 10% HumanEval. A weak policy can overfit to the most common domain and call the same tool everywhere. The domain-oracle baseline makes that failure easy to detect.</p>
 
-    <h3>I-5. The commit-immediately attractor</h3>
-    <p>The most insidious failure mode. The agent discovers that committing immediately with no tool calls gives: step reward = 0 (no tools called) + commit reward ≈ −0.5 (wrong) + efficiency bonus ≈ 0 (quality gate blocks it). Total ≈ −0.5. Versus calling tools: step reward = −0.1 to −2.0 + commit reward ≈ 1.0. If the model isn't confident the tool will help enough, −0.5 is better than −2.0 + 1.0 = −1.0. The policy converges to "never try, always fail cheaply." This is structurally identical to the guess-and-quit collapse in LotteryElicitationEnv. Prescribed fixes: increase wrong-answer penalty, force minimum tool exploration before commit is allowed.</p>
+    <h3>5. The commit-immediately attractor</h3>
+    <p>Because commit is free, an untrained agent can minimize spending by answering immediately. The quality gate blocks the efficiency bonus for poor answers, so a successful policy must learn the marginal value of information rather than simply learning to spend nothing.</p>
   </section>
 
   <!-- ============================================================ -->
@@ -352,7 +366,7 @@ END EPISODE</code></pre>
     <h2>Prior Work and Foundations</h2>
     <ul>
       <li><strong>Weitzman (1979)</strong> "Optimal Search for the Best Alternative" — foundational search economics. Information has a cost; rational agents should not search beyond expected marginal gain.</li>
-      <li><strong>SearchEconomicsEnv</strong> (Sharma / USC / Ceramic AI) — direct predecessor. Single-tool (search), single-dataset (HotpotQA), budget-constrained. Proved the principle.</li>
+      <li><strong>SearchEconomicsEnv</strong> (Yashaswi Sharma / University of Southern California / Ceramic AI) — direct predecessor. Single-tool (search), single-dataset (HotpotQA), budget-constrained. Proved the principle.</li>
       <li><strong>ReAct</strong> (Yao et al., 2022) — interleaving reasoning and tool calls. The paradigm our agent operates within.</li>
       <li><strong>Toolformer</strong> (Schick et al., 2023) — self-supervised tool learning for LLMs.</li>
       <li><strong>GRPO / DeepSeekMath</strong> (Shao et al., 2024) — group-relative advantages. Our training algorithm.</li>
@@ -387,7 +401,7 @@ python baselines/oracle.py
   <section>
     <h2>What We Did Not Do (Yet)</h2>
     <ul>
-      <li><strong>No converged checkpoint.</strong> Pipeline validated; convergence is the next milestone.</li>
+      <li><strong>No converged checkpoint.</strong> Environment, baselines, tests, and deployment are complete; convergence is the next milestone.</li>
       <li><strong>Fixed cost model.</strong> Real API costs are dynamic. Our fixed costs are a useful simplification.</li>
       <li><strong>No human respondent.</strong> All grading is automated (EM + F1). Human evaluation of answer quality is future work.</li>
       <li><strong>Single budget per episode.</strong> Per-question budgets or adaptive budgets are natural extensions.</li>
@@ -404,7 +418,7 @@ python baselines/oracle.py
   <!-- ============================================================ -->
   <section>
     <h2>Conclusion</h2>
-    <p>CostAwareToolEnv reframes a practical engineering problem — "LLM agents waste money on tools" — as a verifiable RL task. Six tools with a 20:1 cost ratio, four domains requiring fundamentally different tool strategies, a shared episode budget, and a decomposed reward that penalizes every tool call while rewarding correct-and-frugal commits. The infrastructure war stories (reward scale mismatch, budget-exhaustion cliffs, NCCL desync, domain collapse, the commit-immediately attractor) are lessons the next OpenEnv + TRL + multi-turn submission will need. The research question — can a GRPO-trained LLM beat the domain oracle baseline on cost-adjusted score? — is the experiment this submission sets up. Convergence is the next milestone, not a current claim.</p>
+    <p>CostAwareToolEnv reframes a practical engineering problem — "LLM agents waste money on tools" — as a verifiable RL task. Six tools with a 20:1 cost ratio, four domains requiring fundamentally different tool strategies, a shared episode budget, and a decomposed reward that penalizes every tool call while rewarding correct-and-frugal commits. The completed contribution is the environment: a deployed OpenEnv-native benchmark, explicit cost model, reward implementation, baselines, tests, and submission artifact. The research question — can a GRPO-trained LLM beat the domain oracle baseline on cost-adjusted score? — is now ready to evaluate cleanly. Convergence is the next milestone, not a current claim.</p>
   </section>
 
   <!-- ============================================================ -->

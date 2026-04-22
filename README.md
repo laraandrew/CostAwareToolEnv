@@ -18,11 +18,15 @@ tags:
 
 **An OpenEnv-compatible reinforcement learning environment for multi-tool, cost-aware question answering.**
 
-Built on top of [SearchEconomicsEnv](https://huggingface.co/spaces/yashu2000/search-economics-env) (Yash Sharma, USC / Ceramic AI), this environment generalises the single-tool (search-only) formulation to a full **tool-selection problem**: the agent must choose *which* of six tools to call at each step, managing a shared cost budget across a multi-domain question set (HotpotQA, MATH, GPQA, HumanEval).
+**Authors:** Andrew Lara (Franklin and Marshall College); Yashaswi Sharma, Defu Cao, Muyan Weng (University of Southern California).
+
+Built on top of [SearchEconomicsEnv](https://huggingface.co/spaces/yashu2000/search-economics-env) (Yashaswi Sharma, University of Southern California / Ceramic AI), this environment generalises the single-tool (search-only) formulation to a full **tool-selection problem**: the agent must choose *which* of six tools to call at each step, managing a shared cost budget across a multi-domain question set (HotpotQA, MATH, GPQA, HumanEval).
 
 The core research question: **can an RL agent learn a cost-aware tool routing policy that outperforms simple heuristics like "always search" or "always use the cheapest tool"?**
 
 Built for the **AgentX-AgentBeats Phase 2 OpenEnv Research Track**.
+
+This submission ships the environment, reward implementation, baselines, deployment artifact, and tests. It does **not** claim a converged trained checkpoint; GRPO convergence is the next experimental milestone.
 
 ## Links
 

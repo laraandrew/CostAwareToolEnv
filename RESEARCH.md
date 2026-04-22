@@ -1,8 +1,12 @@
 # CostAwareToolEnv — Research Document
 
-**Authors:** Andrew, Yash Sharma (USC)
+**Authors:** Andrew Lara (Franklin and Marshall College); Yashaswi Sharma, Defu Cao, Muyan Weng (University of Southern California)
 **Built on:** [SearchEconomicsEnv](https://github.com/sharma-yash01/SearchEconomicsEnv)
 **Live environment:** https://huggingface.co/spaces/landrew9/cost-aware-tool-env
+
+**Submission blog:** https://huggingface.co/spaces/landrew9/CostAwareToolEnv-Blog
+
+**GitHub:** https://github.com/laraandrew/CostAwareToolEnv
 
 ---
 
@@ -37,6 +41,18 @@ The agent is given a fixed **budget** (default: 50 cost units) to spend across 1
 - *Is it worth spending 2.0 on an LLM call, or can a 0.1 calculator solve this?*
 
 This is the same tradeoff a human researcher faces every day.
+
+### Current Research Contribution
+
+This submission contributes a complete, deployed OpenEnv-compatible environment rather than a claimed converged policy. The completed work includes:
+
+- A FastAPI/OpenEnv environment with reset, step, health, tool manifest, browser demo, and concurrent session support.
+- Six implemented tools with explicit heterogeneous costs: Ceramic search, Wikipedia lookup, calculator, Python executor, LLM reasoning, and commit.
+- A deterministic reward implementation with step costs, Exact Match / token F1 answer grading, a quality-gated efficiency bonus, and a shared 10-question episode budget.
+- Three reference baselines: random tool selection, cheapest-first routing, and a domain-aware oracle.
+- Unit tests covering API behavior, tool behavior, sandbox restrictions, and core integration paths.
+
+We do **not** claim a converged GRPO checkpoint in the current submission. The environment is built so that GRPO training can now test whether learned policies beat the domain oracle on cost-adjusted reward.
 
 ---
 
@@ -465,7 +481,7 @@ Commits after exhausting its domain-specific sequence.
 
 ## 9. Where This Came From: SearchEconomicsEnv
 
-CostAwareToolEnv is a direct generalization of [SearchEconomicsEnv](https://github.com/sharma-yash01/SearchEconomicsEnv), built by Yash Sharma (USC) and Ceramic AI.
+CostAwareToolEnv is a direct generalization of [SearchEconomicsEnv](https://github.com/sharma-yash01/SearchEconomicsEnv), built by Yashaswi Sharma (University of Southern California) and Ceramic AI.
 
 SearchEconomicsEnv posed a simpler version of the same question: given a fixed number of **search calls**, can an RL agent learn to answer HotpotQA questions efficiently? It used one tool (search), one dataset (HotpotQA), and Weitzman-style budget penalties.
 

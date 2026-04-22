@@ -6,7 +6,7 @@ Drop this entire block into a fresh Claude conversation to generate the research
 
 ## PROMPT
 
-You are writing a research blog post about a reinforcement learning environment called **CostAwareToolEnv**. The authors are Andrew and Yash Sharma (USC), building on Yash's prior work on SearchEconomicsEnv. The target audience is ML researchers and practitioners who read papers like those at NeurIPS, ICLR, and the Hugging Face blog — people who understand RL and LLMs but are not experts in tool-use or search economics.
+You are writing a research blog post about a reinforcement learning environment called **CostAwareToolEnv**. The title is **The Price of Thinking: Teaching LLM Agents When Tools Are Worth the Cost**. The authors are Andrew Lara (Franklin and Marshall College), Yashaswi Sharma (University of Southern California), Defu Cao (University of Southern California), and Muyan Weng (University of Southern California). The project builds on Yashaswi Sharma's prior SearchEconomicsEnv work. The target audience is ML researchers and practitioners who read papers like those at NeurIPS, ICLR, and the Hugging Face blog — people who understand RL and LLMs but are not experts in tool-use or search economics.
 
 The post should be **1,500–2,000 words**, well-structured with section headers, and written in a direct, confident academic-blog tone (think: The Gradient, Hugging Face blog, or a good arXiv blog post). Avoid hype. Let the ideas do the work.
 
@@ -17,6 +17,8 @@ The post should be **1,500–2,000 words**, well-structured with section headers
 **The core problem:** Large language model agents are increasingly given access to tools — search engines, calculators, code interpreters, databases. In real deployments, every tool call costs something: API fees, latency, rate limits, or compute. Current agent frameworks treat tools as free: call whatever you want, as many times as you want. This is unrealistic and economically wasteful.
 
 **The research gap:** Most RL environments for tool-using agents either (a) focus on a single tool (e.g. search-only retrieval agents), or (b) ignore cost entirely and measure only answer quality. There is no standard RL training ground where the agent must *choose between tools with different price/quality tradeoffs* under a shared budget constraint.
+
+**Actual current contribution:** This submission ships the environment, reward function, baselines, deployment artifact, and tests. It does not claim a converged trained checkpoint. The honest research status is: the benchmark is complete and ready for GRPO training; convergence and baseline-beating policy results are the next milestone.
 
 **What we built:** CostAwareToolEnv — an OpenEnv-compatible RL environment that puts cost-aware tool selection at the center of the learning objective. The agent picks from six tools per step (web search, Wikipedia, calculator, Python executor, LLM reasoning, or commit) across four question domains (HotpotQA, MATH, GPQA, HumanEval), with a shared budget that depletes as tools are called.
 
@@ -42,7 +44,7 @@ Explain why tool use is now central to LLM agents. Cite and discuss:
 
 Explain the economic analogy: information has a cost, and rational agents should not search more than their expected marginal gain from search. Cite:
 - Weitzman (1979) "Optimal Search for the Best Alternative" — the foundational search economics paper
-- SearchEconomicsEnv by Yash Sharma / USC (https://github.com/sharma-yash01/SearchEconomicsEnv, https://huggingface.co/spaces/yashu2000/search-economics-env) — the direct predecessor that built this RL environment for search-budget-constrained HotpotQA
+- SearchEconomicsEnv by Yashaswi Sharma / University of Southern California (https://github.com/sharma-yash01/SearchEconomicsEnv, https://huggingface.co/spaces/yashu2000/search-economics-env) — the direct predecessor that built this RL environment for search-budget-constrained HotpotQA
 - Look for any recent work on "budgeted retrieval" or "adaptive retrieval" in RAG systems (2024-2025) that shows that unconstrained retrieval hurts performance or cost-effectiveness. Papers like FLARE, IterRetGen, or similar might be relevant.
 
 **3. The multi-domain challenge**
@@ -79,7 +81,7 @@ Explain why RL (not just prompting or supervised learning) is the right frame fo
 
 5. **Baselines and what they tell us** — describe the three baselines (random, cheapest-first, domain-oracle) and what their expected performance reveals about the structure of the problem.
 
-6. **What we're building toward** — the research agenda: train a PPO or DQN agent on this environment, show it beats baselines, and study what routing policies it learns. Can it learn that LLM reasoning is worth 2x the cost for GPQA but wasteful for simple arithmetic?
+6. **What we're building toward** — the research agenda: train a GRPO agent on this environment, show it beats baselines, and study what routing policies it learns. Can it learn that LLM reasoning is worth 20x the calculator cost for GPQA but wasteful for simple arithmetic?
 
 7. **Conclusion** — the broader point: as AI systems become more agentic, cost-aware tool selection will be as important as answer quality. We need RL environments that take this seriously. This is one.
 
