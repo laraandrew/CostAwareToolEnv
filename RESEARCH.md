@@ -1,12 +1,12 @@
-# CostAwareToolEnv — Research Document
+# ToolOrchestratorEnv — Research Document
 
 **Authors:** Andrew Lara (Franklin and Marshall College); Yashaswi Sharma, Defu Cao, Muyan Weng (University of Southern California)
 **Built on:** [SearchEconomicsEnv](https://github.com/sharma-yash01/SearchEconomicsEnv)
-**Live environment:** https://huggingface.co/spaces/landrew9/cost-aware-tool-env
+**Live environment:** https://huggingface.co/spaces/landrew9/ToolOrchestratorEnv
 
-**Submission blog:** https://huggingface.co/spaces/landrew9/CostAwareToolEnv-Blog
+**Submission blog:** https://huggingface.co/spaces/landrew9/ToolOrchestratorEnv-Blog
 
-**GitHub:** https://github.com/laraandrew/CostAwareToolEnv
+**GitHub:** https://github.com/laraandrew/ToolOrchestratorEnv
 
 ---
 
@@ -32,7 +32,7 @@ Modern AI agents have access to tools — search engines, calculators, code runn
 
 This creates a gap between research and reality. An agent trained on "use whatever tools you want" will behave terribly in production where every call costs money.
 
-**CostAwareToolEnv closes that gap.**
+**ToolOrchestratorEnv closes that gap.**
 
 The agent is given a fixed **budget** (default: 50 cost units) to spend across 10 questions. Every tool call deducts from that budget. The agent must decide:
 
@@ -53,6 +53,8 @@ This submission contributes a complete, deployed OpenEnv-compatible environment 
 - Unit tests covering API behavior, tool behavior, sandbox restrictions, and core integration paths.
 
 We do **not** claim a converged GRPO checkpoint in the current submission. The environment is built so that GRPO training can now test whether learned policies beat the domain oracle on cost-adjusted reward.
+
+We also do **not** include training logs from Env Factory yet. The submission environment requires repeated structured multi-tool calls across each episode, and we were unable to make that multi-tool action flow reliable inside the current Env Factory integration path before the deadline. The planned next step is to continue experimentation through post-training once Env Factory stabilizes for this interaction pattern and more compatible model series are available.
 
 ---
 
@@ -481,15 +483,15 @@ Commits after exhausting its domain-specific sequence.
 
 ## 9. Where This Came From: SearchEconomicsEnv
 
-CostAwareToolEnv is a direct generalization of [SearchEconomicsEnv](https://github.com/sharma-yash01/SearchEconomicsEnv), built by Yashaswi Sharma (University of Southern California) and Ceramic AI.
+ToolOrchestratorEnv is a direct generalization of [SearchEconomicsEnv](https://github.com/sharma-yash01/SearchEconomicsEnv), built by Yashaswi Sharma (University of Southern California) and Ceramic AI.
 
 SearchEconomicsEnv posed a simpler version of the same question: given a fixed number of **search calls**, can an RL agent learn to answer HotpotQA questions efficiently? It used one tool (search), one dataset (HotpotQA), and Weitzman-style budget penalties.
 
 The insight from that work was that agents could learn non-trivial search strategies — knowing when one search was enough versus when multiple hops were needed.
 
-CostAwareToolEnv asks the harder question: **can the same principle scale to multiple tools and multiple domains?** Instead of "how many searches do I make?", the question becomes "which tool do I pick for this type of question, at this point in my budget?"
+ToolOrchestratorEnv asks the harder question: **can the same principle scale to multiple tools and multiple domains?** Instead of "how many searches do I make?", the question becomes "which tool do I pick for this type of question, at this point in my budget?"
 
-| | SearchEconomicsEnv | CostAwareToolEnv |
+| | SearchEconomicsEnv | ToolOrchestratorEnv |
 |---|---|---|
 | Tools | 1 (search) | 6 (search, wiki, calc, code, LLM, commit) |
 | Datasets | HotpotQA only | HotpotQA + MATH + GPQA + HumanEval |
@@ -518,7 +520,7 @@ A well-trained agent should exhibit these behaviors:
 ## 11. File-by-File Reference
 
 ```
-CostAwareToolEnv/
+ToolOrchestratorEnv/
 │
 ├── app.py
 │   The FastAPI web server. Handles /reset, /step, /health, /tools, /web.
@@ -533,7 +535,7 @@ CostAwareToolEnv/
 │
 ├── env/
 │   ├── environment.py
-│   │   CostAwareToolEnvironment class. The main game loop.
+│   │   ToolOrchestratorEnvironment class. The main game loop.
 │   │   reset() — starts episode, samples questions, zeroes budget.
 │   │   step()  — validates action, dispatches tool, charges cost,
 │   │             handles commit (grade + reward), manages episode end.

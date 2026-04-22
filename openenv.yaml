@@ -1,5 +1,5 @@
 spec: 1
-app: cost-aware-tool-env
+app: ToolOrchestratorEnv
 type: space
 runtime: fastapi
 entrypoint: app:app

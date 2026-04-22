@@ -6,7 +6,7 @@ Drop this entire block into a fresh Claude conversation to generate the research
 
 ## PROMPT
 
-You are writing a research blog post about a reinforcement learning environment called **CostAwareToolEnv**. The title is **The Price of Thinking: Teaching LLM Agents When Tools Are Worth the Cost**. The authors are Andrew Lara (Franklin and Marshall College), Yashaswi Sharma (University of Southern California), Defu Cao (University of Southern California), and Muyan Weng (University of Southern California). The project builds on Yashaswi Sharma's prior SearchEconomicsEnv work. The target audience is ML researchers and practitioners who read papers like those at NeurIPS, ICLR, and the Hugging Face blog — people who understand RL and LLMs but are not experts in tool-use or search economics.
+You are writing a research blog post about a reinforcement learning environment called **ToolOrchestratorEnv**. The title is **The Price of Thinking: Teaching LLM Agents When Tools Are Worth the Cost**. The authors are Andrew Lara (Franklin and Marshall College), Yashaswi Sharma (University of Southern California), Defu Cao (University of Southern California), and Muyan Weng (University of Southern California). The project builds on Yashaswi Sharma's prior SearchEconomicsEnv work. The target audience is ML researchers and practitioners who read papers like those at NeurIPS, ICLR, and the Hugging Face blog — people who understand RL and LLMs but are not experts in tool-use or search economics.
 
 The post should be **1,500–2,000 words**, well-structured with section headers, and written in a direct, confident academic-blog tone (think: The Gradient, Hugging Face blog, or a good arXiv blog post). Avoid hype. Let the ideas do the work.
 
@@ -20,7 +20,7 @@ The post should be **1,500–2,000 words**, well-structured with section headers
 
 **Actual current contribution:** This submission ships the environment, reward function, baselines, deployment artifact, and tests. It does not claim a converged trained checkpoint. The honest research status is: the benchmark is complete and ready for GRPO training; convergence and baseline-beating policy results are the next milestone.
 
-**What we built:** CostAwareToolEnv — an OpenEnv-compatible RL environment that puts cost-aware tool selection at the center of the learning objective. The agent picks from six tools per step (web search, Wikipedia, calculator, Python executor, LLM reasoning, or commit) across four question domains (HotpotQA, MATH, GPQA, HumanEval), with a shared budget that depletes as tools are called.
+**What we built:** ToolOrchestratorEnv — an OpenEnv-compatible RL environment that puts cost-aware tool selection at the center of the learning objective. The agent picks from six tools per step (web search, Wikipedia, calculator, Python executor, LLM reasoning, or commit) across four question domains (HotpotQA, MATH, GPQA, HumanEval), with a shared budget that depletes as tools are called.
 
 **Why this is novel:**
 - It extends the "search economics" framing from a single tool to a heterogeneous tool portfolio
@@ -71,7 +71,7 @@ Explain why RL (not just prompting or supervised learning) is the right frame fo
 
 2. **Search economics, briefly** — one paragraph on Weitzman, one on SearchEconomicsEnv. The framing: information retrieval as a market with prices.
 
-3. **CostAwareToolEnv: the environment** — describe the setup clearly:
+3. **ToolOrchestratorEnv: the environment** — describe the setup clearly:
    - 6 tools, 4 datasets, shared budget
    - The action-observation loop (what the agent sees, what it decides)
    - The reward formula (explain it intuitively: you pay for every call, you earn back on correct commits, and get a bonus for answering correctly without blowing your budget)
@@ -94,7 +94,7 @@ Explain why RL (not just prompting or supervised learning) is the right frame fo
 - **Write for skeptics** — assume your reader will ask "why does this matter" and "what's actually new." Answer those questions directly in the text.
 - **Avoid marketing language** — no "revolutionary," "groundbreaking," or "state-of-the-art." Just describe what was built and why it's useful.
 - **Include the reward formula** — write it out mathematically and then explain it in plain English. Researchers appreciate seeing the actual math.
-- **Link to the HF Space** — mention that the environment is live at https://huggingface.co/spaces/yashu2000/search-economics-env (SearchEconomicsEnv, the predecessor) and that CostAwareToolEnv will be deployed alongside it.
+- **Link to the HF Space** — mention that SearchEconomicsEnv, the predecessor, is live at https://huggingface.co/spaces/yashu2000/search-economics-env and that ToolOrchestratorEnv is live at https://huggingface.co/spaces/landrew9/ToolOrchestratorEnv.
 
 ---
 

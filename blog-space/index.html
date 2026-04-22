@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>The Price of Thinking: CostAwareToolEnv</title>
-  <meta name="description" content="The Price of Thinking: CostAwareToolEnv, an OpenEnv-native RL benchmark where LLM agents learn cost-aware tool orchestration across 6 tools and 4 benchmarks under a shared budget.">
+  <title>ToolOrchestratorEnv: The Price of Thinking</title>
+  <meta name="description" content="ToolOrchestratorEnv: The Price of Thinking, an OpenEnv-native RL benchmark where LLM agents learn cost-aware tool orchestration across 6 tools and 4 benchmarks under a shared budget.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -84,7 +84,7 @@
 <body>
 
 <nav class="topnav">
-  <a href="#top" class="brand"><span class="dot"></span> CostAwareToolEnv</a>
+  <a href="#top" class="brand"><span class="dot"></span> ToolOrchestratorEnv</a>
   <div class="links">
     <a href="#problem">Problem</a>
     <a href="#design">Design</a>
@@ -92,7 +92,7 @@
     <a href="#grpo">GRPO</a>
     <a href="#results">Results</a>
     <a href="#training">Training</a>
-    <a href="https://huggingface.co/spaces/landrew9/cost-aware-tool-env" target="_blank">Live Space ↗</a>
+    <a href="https://huggingface.co/spaces/landrew9/ToolOrchestratorEnv" target="_blank">Live Space ↗</a>
   </div>
 </nav>
 
@@ -100,11 +100,11 @@
 
   <div class="hero">
     <div class="hero-badge">OpenEnv · AgentBeats Phase 2</div>
-    <h1>The Price of Thinking</h1>
-    <p class="subtitle">CostAwareToolEnv teaches LLM agents when a tool call is worth its cost, and when the smarter move is to stop spending.</p>
+    <h1>ToolOrchestratorEnv</h1>
+    <p class="subtitle">ToolOrchestratorEnv teaches LLM agents when a tool call is worth its cost, and when the smarter move is to stop spending.</p>
     <div class="badges">
-      <a href="https://github.com/laraandrew/CostAwareToolEnv" target="_blank"><img src="https://img.shields.io/badge/GitHub-Repository-181717?logo=github" alt="GitHub"/></a>
-      <a href="https://huggingface.co/spaces/landrew9/cost-aware-tool-env" target="_blank"><img src="https://img.shields.io/badge/HF%20Space-Live%20Env-FFD21E?logo=huggingface&logoColor=black" alt="HF Space"/></a>
+      <a href="https://github.com/laraandrew/ToolOrchestratorEnv" target="_blank"><img src="https://img.shields.io/badge/GitHub-Repository-181717?logo=github" alt="GitHub"/></a>
+      <a href="https://huggingface.co/spaces/landrew9/ToolOrchestratorEnv" target="_blank"><img src="https://img.shields.io/badge/HF%20Space-Live%20Env-FFD21E?logo=huggingface&logoColor=black" alt="HF Space"/></a>
       <img src="https://img.shields.io/badge/OpenEnv-Native-4B8BBE" alt="OpenEnv"/>
       <img src="https://img.shields.io/badge/Tools-6-brightgreen" alt="6 Tools"/>
       <img src="https://img.shields.io/badge/Benchmarks-4-blue" alt="4 Benchmarks"/>
@@ -114,37 +114,37 @@
       <strong>Andrew Lara</strong> — Franklin and Marshall College<br/>
       <strong>Yashaswi Sharma</strong>, <strong>Defu Cao</strong>, <strong>Muyan Weng</strong> — University of Southern California
     </div>
-    <div class="byline">CostAwareToolEnv · AgentBeats Phase 2 · OpenEnv Challenge Submission</div>
+    <div class="byline">ToolOrchestratorEnv · AgentBeats Phase 2 · OpenEnv Challenge Submission</div>
   </div>
 
   <div class="btn-group">
-    <a class="btn" href="https://huggingface.co/spaces/landrew9/cost-aware-tool-env" target="_blank">Live Environment Space →</a>
-    <a class="btn btn-outline" href="https://github.com/laraandrew/CostAwareToolEnv" target="_blank">GitHub Repo</a>
-    <a class="btn btn-outline" href="https://blog.andrewlara.com/ai/engineering/projects/2026/04/13/cost-aware-tool-orchestration-via-reinforcement-learning.html" target="_blank">Full Blog Post</a>
+    <a class="btn" href="https://huggingface.co/spaces/landrew9/ToolOrchestratorEnv" target="_blank">Live Environment Space →</a>
+    <a class="btn btn-outline" href="https://github.com/laraandrew/ToolOrchestratorEnv" target="_blank">GitHub Repo</a>
+    <a class="btn btn-outline" href="https://huggingface.co/spaces/landrew9/ToolOrchestratorEnv-Blog" target="_blank">Submission Blog Space</a>
   </div>
 
   <!-- ============================================================ -->
   <section id="problem">
     <h2>The Problem with Free Tools</h2>
     <p>Modern LLM agents have access to tools — search engines, calculators, code interpreters, databases. In every real deployment, these tools cost something: API fees, latency, rate limits, compute time. But almost every existing RL benchmark treats tools as <strong>free and unlimited</strong>.</p>
-    <p>This creates a gap between research and reality. An agent trained on "use whatever tools you want" behaves terribly in production where every call costs money. CostAwareToolEnv closes that gap.</p>
+    <p>This creates a gap between research and reality. An agent trained on "use whatever tools you want" behaves terribly in production where every call costs money. ToolOrchestratorEnv closes that gap.</p>
     <p>The agent is given a fixed <strong>budget of 50 cost units</strong> to spend across 10 questions. Every tool call deducts from that budget. The agent must decide: <em>which tool is worth calling for this question? How many times should I call tools before committing an answer? Is it worth spending 2.0 on an LLM call, or can a 0.1 calculator solve this?</em></p>
-    <p><strong>In one sentence:</strong> CostAwareToolEnv is a deployed, test-covered OpenEnv environment for studying whether reinforcement learning can teach LLM agents to route across heterogeneous tools under a shared budget, rather than treating every tool call as free.</p>
+    <p><strong>In one sentence:</strong> ToolOrchestratorEnv is a deployed, test-covered OpenEnv environment for studying whether reinforcement learning can teach LLM agents to route across heterogeneous tools under a shared budget, rather than treating every tool call as free.</p>
 
     <h3>Where this came from</h3>
-    <p>CostAwareToolEnv generalizes <a href="https://github.com/sharma-yash01/SearchEconomicsEnv" target="_blank">SearchEconomicsEnv</a> (Yashaswi Sharma, University of Southern California / Ceramic AI), which posed a simpler version: given a fixed number of search calls, can an RL agent learn to answer HotpotQA questions efficiently? That work showed agents could learn non-trivial search strategies. We ask the harder question: <strong>can the same principle scale to multiple tools and multiple domains?</strong></p>
+    <p>ToolOrchestratorEnv generalizes <a href="https://github.com/sharma-yash01/SearchEconomicsEnv" target="_blank">SearchEconomicsEnv</a> (Yashaswi Sharma, University of Southern California / Ceramic AI), which posed a simpler version: given a fixed number of search calls, can an RL agent learn to answer HotpotQA questions efficiently? That work showed agents could learn non-trivial search strategies. We ask the harder question: <strong>can the same principle scale to multiple tools and multiple domains?</strong></p>
     <figure class="diagram">
       <div class="mermaid">
 flowchart LR
   A["Weitzman search economics<br/>information has a cost"] --> B["SearchEconomicsEnv<br/>1 search tool + HotpotQA"]
-  B --> C["CostAwareToolEnv<br/>6 tools + 4 domains + shared budget"]
+  B --> C["ToolOrchestratorEnv<br/>6 tools + 4 domains + shared budget"]
   C --> D["AgentBeats Phase 2<br/>OpenEnv submission"]
       </div>
       <figcaption>Research lineage: from economic search theory to a deployed multi-tool RL environment.</figcaption>
     </figure>
     <div class="table-wrap">
       <table>
-        <thead><tr><th></th><th>SearchEconomicsEnv</th><th>CostAwareToolEnv</th></tr></thead>
+        <thead><tr><th></th><th>SearchEconomicsEnv</th><th>ToolOrchestratorEnv</th></tr></thead>
         <tbody>
           <tr><td><strong>Tools</strong></td><td>1 (search)</td><td>6 (search, wiki, calc, code, LLM, commit)</td></tr>
           <tr><td><strong>Datasets</strong></td><td>HotpotQA only</td><td>HotpotQA + MATH + GPQA + HumanEval</td></tr>
@@ -344,7 +344,7 @@ sequenceDiagram
   participant GRPO as GRPO trainer
   participant Policy as LLM policy
   participant Client as OpenEnv client
-  participant Env as CostAwareToolEnv
+  participant Env as ToolOrchestratorEnv
   participant Tools as Tool registry
   GRPO->>Policy: sample G trajectories
   Policy->>Client: structured tool actions
@@ -424,6 +424,7 @@ sequenceDiagram
       <li><strong>Environment validated end-to-end.</strong> Reset/step API, tool dispatch, answer grading, reward calculation, concurrent session handling, and browser demo are implemented and covered by tests.</li>
       <li><strong>Environment deployed and tested.</strong> HF Space serves concurrent sessions. WebSocket client connects, steps episodes, returns structured observations.</li>
       <li><strong>All three baselines functional.</strong> They provide sanity checks for random exploration, low-cost heuristics, and hardcoded domain routing.</li>
+      <li><strong>No training logs yet.</strong> We were unable to complete Env Factory integration during the submission window because the current interface did not support our multi-tool action flow cleanly enough for reliable rollouts.</li>
       <li><strong>Training risks identified honestly.</strong> See the next section for the concrete failure modes this environment is designed to expose.</li>
     </ul>
   </section>
@@ -431,7 +432,8 @@ sequenceDiagram
   <!-- ============================================================ -->
   <section id="training">
     <h2>GRPO Training: What This Environment Is Built to Test</h2>
-    <p>The next research step is to train with TRL's GRPO via an OpenEnv-compatible rollout loop. We are careful about the claim: this submission ships the environment and baselines, not a final trained policy. The failure modes below are the concrete behaviors the environment is designed to make measurable.</p>
+    <p>The next research step is to train with TRL's GRPO via an OpenEnv-compatible rollout loop. We are careful about the claim: this submission ships the environment and baselines, not a final trained policy. The limiting factor was not the reward design or environment server; it was Env Factory integration. Our environment requires a model to make structured, repeated multi-tool calls across an episode, and we were not able to make that interaction reliable enough inside the current Env Factory path to produce trustworthy training logs before submission. We plan to continue the experiments as Env Factory stabilizes and as more post-training model series become available.</p>
+    <p>The failure modes below are the concrete behaviors the environment is designed to make measurable once that post-training loop is stable.</p>
 
     <figure class="diagram">
       <div class="mermaid">
@@ -467,7 +469,7 @@ flowchart TD
   <!-- ============================================================ -->
   <section>
     <h2>Why OpenEnv</h2>
-    <p>OpenEnv provides: (1) a standard WebSocket contract consumable by TRL's <code>rollout_func</code>, (2) per-session state with concurrent session support, and (3) a uniform deployment path — same code runs in-process for tests, as Docker for dev, and as a HF Space for training. No new abstractions invented; base types only.</p>
+    <p>OpenEnv provides: (1) a standard WebSocket contract consumable by training clients, (2) per-session state with concurrent session support, and (3) a uniform deployment path — same code runs in-process for tests, as Docker for dev, and as a HF Space for training. The remaining integration work is specifically at the Env Factory/model-control layer: making repeated structured multi-tool calls stable enough for post-training rollouts.</p>
   </section>
 
   <!-- ============================================================ -->
@@ -490,11 +492,11 @@ flowchart TD
   <section>
     <h2>Quick Start</h2>
     <pre><code># 1. Run the env locally
-pip install -e .
+pip install -r requirements.txt
 python app.py    # FastAPI on port 8000
 
 # 2. Or use the HF Space
-export ENV_BASE_URL="https://landrew9-cost-aware-tool-env.hf.space"
+export ENV_BASE_URL="https://landrew9-toolorchestratorenv.hf.space"
 
 # 3. Run baselines
 python baselines/random_tool.py
@@ -511,6 +513,7 @@ python baselines/oracle.py
     <h2>What We Did Not Do (Yet)</h2>
     <ul>
       <li><strong>No converged checkpoint.</strong> Environment, baselines, tests, and deployment are complete; convergence is the next milestone.</li>
+      <li><strong>No Env Factory training logs yet.</strong> We could not complete a reliable Env Factory integration for repeated multi-tool calls in time for submission. This is planned follow-up work as the Env Factory path and available post-training model series mature.</li>
       <li><strong>Fixed cost model.</strong> Real API costs are dynamic. Our fixed costs are a useful simplification.</li>
       <li><strong>No human respondent.</strong> All grading is automated (EM + F1). Human evaluation of answer quality is future work.</li>
       <li><strong>Single budget per episode.</strong> Per-question budgets or adaptive budgets are natural extensions.</li>
@@ -527,7 +530,7 @@ python baselines/oracle.py
   <!-- ============================================================ -->
   <section>
     <h2>Conclusion</h2>
-    <p>CostAwareToolEnv reframes a practical engineering problem — "LLM agents waste money on tools" — as a verifiable RL task. Six tools with a 20:1 cost ratio, four domains requiring fundamentally different tool strategies, a shared episode budget, and a decomposed reward that penalizes every tool call while rewarding correct-and-frugal commits. The completed contribution is the environment: a deployed OpenEnv-native benchmark, explicit cost model, reward implementation, baselines, tests, and submission artifact. The research question — can a GRPO-trained LLM beat the domain oracle baseline on cost-adjusted score? — is now ready to evaluate cleanly. Convergence is the next milestone, not a current claim.</p>
+    <p>ToolOrchestratorEnv reframes a practical engineering problem — "LLM agents waste money on tools" — as a verifiable RL task. Six tools with a 20:1 cost ratio, four domains requiring fundamentally different tool strategies, a shared episode budget, and a decomposed reward that penalizes every tool call while rewarding correct-and-frugal commits. The completed contribution is the environment: a deployed OpenEnv-native benchmark, explicit cost model, reward implementation, baselines, tests, and submission artifact. The research question — can a GRPO-trained LLM beat the domain oracle baseline on cost-adjusted score? — is now ready to evaluate cleanly. Convergence is the next milestone, not a current claim.</p>
   </section>
 
   <!-- ============================================================ -->
@@ -550,11 +553,11 @@ python baselines/oracle.py
   </section>
 
   <div class="footer">
-    <p>CostAwareToolEnv · AgentX–AgentBeats Phase 2 · UC Berkeley RDI</p>
+    <p>ToolOrchestratorEnv · AgentX–AgentBeats Phase 2 · UC Berkeley RDI</p>
     <p style="margin-top:.5rem;">
-      <a href="https://github.com/laraandrew/CostAwareToolEnv" target="_blank">GitHub</a> ·
-      <a href="https://huggingface.co/spaces/landrew9/cost-aware-tool-env" target="_blank">HF Env Space</a> ·
-      <a href="https://blog.andrewlara.com/ai/engineering/projects/2026/04/13/cost-aware-tool-orchestration-via-reinforcement-learning.html" target="_blank">Full Blog</a> ·
+      <a href="https://github.com/laraandrew/ToolOrchestratorEnv" target="_blank">GitHub</a> ·
+      <a href="https://huggingface.co/spaces/landrew9/ToolOrchestratorEnv" target="_blank">HF Env Space</a> ·
+      <a href="https://huggingface.co/spaces/landrew9/ToolOrchestratorEnv-Blog" target="_blank">Submission Blog</a> ·
       <a href="https://github.com/meta-pytorch/OpenEnv" target="_blank">OpenEnv</a> ·
       <a href="https://huggingface.co/docs/trl/en/openenv" target="_blank">TRL × OpenEnv</a>
     </p>

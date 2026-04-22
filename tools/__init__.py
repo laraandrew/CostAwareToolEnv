@@ -1,4 +1,4 @@
-"""Public tool layer for CostAwareToolEnv."""
+"""Public tool layer for ToolOrchestratorEnv."""
 from __future__ import annotations
 
 from .runtime import (

@@ -1,5 +1,5 @@
 ---
-title: CostAwareToolEnv Blog
+title: ToolOrchestratorEnv Blog
 emoji: 💰
 colorFrom: green
 colorTo: blue
@@ -9,15 +9,15 @@ license: mit
 short_description: "Cost-Aware Tool Orchestration via RL — AgentBeats Phase 2"
 ---
 
-# The Price of Thinking: CostAwareToolEnv
+# ToolOrchestratorEnv: The Price of Thinking
 
-Blog post for the CostAwareToolEnv submission to AgentX–AgentBeats Phase 2 (Research Track).
+Blog post for the ToolOrchestratorEnv submission to AgentX–AgentBeats Phase 2 (Research Track).
 
-**The Price of Thinking: Teaching LLM Agents When Tools Are Worth the Cost**
+**ToolOrchestratorEnv: Teaching LLM Agents When Tools Are Worth the Cost**
 
-- **Environment Space**: [landrew9/cost-aware-tool-env](https://huggingface.co/spaces/landrew9/cost-aware-tool-env)
-- **GitHub**: [laraandrew/CostAwareToolEnv](https://github.com/laraandrew/CostAwareToolEnv)
-- **Full Blog**: [blog.andrewlara.com](https://blog.andrewlara.com/ai/engineering/projects/2026/04/13/cost-aware-tool-orchestration-via-reinforcement-learning.html)
+- **Environment Space**: [landrew9/ToolOrchestratorEnv](https://huggingface.co/spaces/landrew9/ToolOrchestratorEnv)
+- **GitHub**: [laraandrew/ToolOrchestratorEnv](https://github.com/laraandrew/ToolOrchestratorEnv)
+- **Submission Blog Space**: [landrew9/ToolOrchestratorEnv-Blog](https://huggingface.co/spaces/landrew9/ToolOrchestratorEnv-Blog)
 
 Authors:
 - Andrew Lara — Franklin and Marshall College

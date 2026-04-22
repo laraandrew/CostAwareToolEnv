@@ -1,7 +1,7 @@
-"""Multi-domain dataset loader for CostAwareToolEnv.
+"""Multi-domain dataset loader for ToolOrchestratorEnv.
 
 Returns a flat list of question dicts, each with a 'domain' key.
-Adapted from CostAwareToolEnv/scripts/process_datasets.py.
+Adapted from ToolOrchestratorEnv/scripts/process_datasets.py.
 """
 from __future__ import annotations
 

@@ -1,4 +1,4 @@
-"""Pydantic data models for CostAwareToolEnv.
+"""Pydantic data models for ToolOrchestratorEnv.
 
 Three main types flow through the environment:
   OrchestratorAction      — agent → env  (what tool to call)

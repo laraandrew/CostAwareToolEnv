@@ -1,5 +1,5 @@
 ---
-title: Cost-Aware Tool Environment
+title: Tool Orchestrator Environment
 emoji: 🔧
 colorFrom: blue
 colorTo: purple
@@ -14,7 +14,7 @@ tags:
   - cost-aware
 ---
 
-# CostAwareToolEnv
+# ToolOrchestratorEnv
 
 **An OpenEnv-compatible reinforcement learning environment for multi-tool, cost-aware question answering.**
 
@@ -26,14 +26,13 @@ The core research question: **can an RL agent learn a cost-aware tool routing po
 
 Built for the **AgentX-AgentBeats Phase 2 OpenEnv Research Track**.
 
-This submission ships the environment, reward implementation, baselines, deployment artifact, and tests. It does **not** claim a converged trained checkpoint; GRPO convergence is the next experimental milestone.
+This submission ships the environment, reward implementation, baselines, deployment artifact, and tests. It does **not** claim a converged trained checkpoint or Env Factory training logs; the Env Factory integration for reliable repeated multi-tool calls remains follow-up work for continued post-training experiments.
 
 ## Links
 
-- **Live environment Space:** [landrew9/cost-aware-tool-env](https://huggingface.co/spaces/landrew9/cost-aware-tool-env)
-- **GitHub repository:** [laraandrew/CostAwareToolEnv](https://github.com/laraandrew/CostAwareToolEnv)
-- **Submission blog Space:** [landrew9/CostAwareToolEnv-Blog](https://huggingface.co/spaces/landrew9/CostAwareToolEnv-Blog)
-- **Personal blog:** [Cost-Aware Tool Orchestration via Reinforcement Learning](https://blog.andrewlara.com/ai/engineering/projects/2026/04/13/cost-aware-tool-orchestration-via-reinforcement-learning.html)
+- **Live environment Space:** [landrew9/ToolOrchestratorEnv](https://huggingface.co/spaces/landrew9/ToolOrchestratorEnv)
+- **GitHub repository:** [laraandrew/ToolOrchestratorEnv](https://github.com/laraandrew/ToolOrchestratorEnv)
+- **Submission blog Space:** [landrew9/ToolOrchestratorEnv-Blog](https://huggingface.co/spaces/landrew9/ToolOrchestratorEnv-Blog)
 
 ---
 
@@ -81,8 +80,8 @@ The efficiency bonus is only awarded when the agent answers correctly **and** st
 
 ```bash
 # 1. Clone and install
-git clone git@github.com:laraandrew/CostAwareToolEnv.git
-cd CostAwareToolEnv
+git clone git@github.com:laraandrew/ToolOrchestratorEnv.git
+cd ToolOrchestratorEnv
 pip install -r requirements.txt
 
 # 2. Configure keys (copy the example and fill in values)
@@ -134,7 +133,7 @@ Returns `{"status": "ok"}`.
 ## Project layout
 
 ```
-CostAwareToolEnv/
+ToolOrchestratorEnv/
 │
 ├── app.py                  # FastAPI server — multi-session, OpenAPI, demo UI
 ├── openenv.yaml            # OpenEnv deployment spec
@@ -143,7 +142,7 @@ CostAwareToolEnv/
 ├── tools/runtime.py        # Tool catalog, validation, and explicit dispatch
 │
 ├── env/                    # ── Core RL environment ──────────────────────────
-│   ├── environment.py      # CostAwareToolEnvironment: reset() + step()
+│   ├── environment.py      # ToolOrchestratorEnvironment: reset() + step()
 │   ├── models.py           # Pydantic types: Action, Observation, State, ToolResult
 │   ├── config.py           # EnvConfig dataclass: budget, costs, reward weights
 │   ├── answer_grading.py   # grade() → (exact_match, f1, quality)
@@ -200,7 +199,7 @@ That keeps the tool usable for intended coding tasks without turning it into a h
 ## Running baselines
 
 ```bash
-# From inside CostAwareToolEnv/
+# From inside ToolOrchestratorEnv/
 python -m baselines.random_tool
 python -m baselines.cheapest_first
 python -m baselines.oracle
@@ -210,7 +209,7 @@ python -m baselines.oracle
 
 ## Relation to SearchEconomicsEnv
 
-| | [SearchEconomicsEnv](https://github.com/sharma-yash01/SearchEconomicsEnv) | CostAwareToolEnv |
+| | [SearchEconomicsEnv](https://github.com/sharma-yash01/SearchEconomicsEnv) | ToolOrchestratorEnv |
 |---|---|---|
 | Tools available | 1 (search only) | 6 (search, wiki, calc, code, LLM, commit) |
 | Datasets | HotpotQA | HotpotQA + MATH + GPQA + HumanEval |
@@ -224,8 +223,8 @@ python -m baselines.oracle
 ## Docker (HuggingFace Spaces)
 
 ```bash
-docker build -t cost-aware-tool-env:latest .
-docker run -p 8000:8000 -e CERAMIC_API_KEY=cer_sk_live_... cost-aware-tool-env:latest
+docker build -t tool-orchestrator-env:latest .
+docker run -p 8000:8000 -e CERAMIC_API_KEY=cer_sk_live_... tool-orchestrator-env:latest
 ```
 
 ---
@@ -241,4 +240,4 @@ docker run -p 8000:8000 -e CERAMIC_API_KEY=cer_sk_live_... cost-aware-tool-env:l
 
 ## About
 
-CostAwareToolEnv extends SearchEconomicsEnv to a multi-tool setting, framing cost-aware tool selection as the core RL objective. Built for the AgentX-AgentBeats Phase 2 OpenEnv Research Track at Berkeley RDI. Ceramic AI search API powers live web retrieval.
+ToolOrchestratorEnv extends SearchEconomicsEnv to a multi-tool setting, framing cost-aware tool selection as the core RL objective. Built for the AgentX-AgentBeats Phase 2 OpenEnv Research Track at Berkeley RDI. Ceramic AI search API powers live web retrieval.

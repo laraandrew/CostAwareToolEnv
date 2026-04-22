@@ -1,4 +1,4 @@
-"""FastAPI server for CostAwareToolEnv.
+"""FastAPI server for ToolOrchestratorEnv.
 
 Exposes the OpenEnv standard endpoints:
   POST /reset          -> OrchestratorObservation + OrchestratorState
@@ -22,7 +22,7 @@ from pydantic import BaseModel
 
 from data.loader import load_all
 from env.config import EnvConfig
-from env.environment import CostAwareToolEnvironment
+from env.environment import ToolOrchestratorEnvironment
 from env.models import OrchestratorAction
 from tools import build_tool_catalog, build_tool_registry, catalog_as_dicts, validate_tool_costs
 
@@ -70,7 +70,7 @@ def _build_demo_html(tool_catalog: List[Any]) -> str:
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>CostAwareToolEnv</title>
+<title>ToolOrchestratorEnv</title>
 <style>
   body {{ font-family: monospace; max-width: 860px; margin: 40px auto; padding: 0 20px; }}
   h1   {{ color: #333; }}
@@ -84,7 +84,7 @@ def _build_demo_html(tool_catalog: List[Any]) -> str:
 </style>
 </head>
 <body>
-<h1>CostAwareToolEnv</h1>
+<h1>ToolOrchestratorEnv</h1>
 <p>Multi-tool cost-aware RL environment with explicit tool routing and sandboxed execution.</p>
 
 <button onclick="doReset()">Reset Episode</button>
@@ -144,8 +144,8 @@ def create_app(
     validate_tool_costs(base_config)
 
     dataset_cache = dataset
-    default_env: Optional[CostAwareToolEnvironment] = None
-    sessions: Dict[str, CostAwareToolEnvironment] = {}
+    default_env: Optional[ToolOrchestratorEnvironment] = None
+    sessions: Dict[str, ToolOrchestratorEnvironment] = {}
     tool_catalog = build_tool_catalog(base_config)
     demo_html = _build_demo_html(tool_catalog)
 
@@ -155,15 +155,15 @@ def create_app(
             dataset_cache = load_dataset_fn(split=base_config.data_split, max_per_domain=200)
         return dataset_cache
 
-    def make_env(effective_config: EnvConfig) -> CostAwareToolEnvironment:
+    def make_env(effective_config: EnvConfig) -> ToolOrchestratorEnvironment:
         registry = tools if tools is not None else build_registry_fn(effective_config)
-        return CostAwareToolEnvironment(
+        return ToolOrchestratorEnvironment(
             config=effective_config,
             tools=registry,
             dataset=get_dataset(),
         )
 
-    def get_default_env() -> CostAwareToolEnvironment:
+    def get_default_env() -> ToolOrchestratorEnvironment:
         nonlocal default_env
         if default_env is None:
             default_env = make_env(base_config)
@@ -174,7 +174,7 @@ def create_app(
         yield
 
     app = FastAPI(
-        title="CostAwareToolEnv",
+        title="ToolOrchestratorEnv",
         description="Multi-tool cost-aware RL environment (OpenEnv / AgentX)",
         version="0.1.0",
         lifespan=lifespan,

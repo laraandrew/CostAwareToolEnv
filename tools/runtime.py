@@ -1,4 +1,4 @@
-"""Shared tool catalog and dispatch helpers for CostAwareToolEnv.
+"""Shared tool catalog and dispatch helpers for ToolOrchestratorEnv.
 
 This module keeps the tool contract explicit:
   - the catalog describes every tool, its purpose, and its input field

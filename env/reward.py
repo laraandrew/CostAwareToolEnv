@@ -1,4 +1,4 @@
-"""Reward functions for CostAwareToolEnv.
+"""Reward functions for ToolOrchestratorEnv.
 
 Adapted from SearchEconomicsEnv/env/reward.py, generalised to a multi-tool
 action space where each tool has its own cost.
